@@ -1,21 +1,21 @@
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
-from .serializers import ProductSerializer, CategorySerializer
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from .serializers import ProductSerializer, CategorySerializer, CategoryCreateSerializer
 from .models import Product, Category
 from .permissions import IsOwner
 
 
-class CategoriesListView(GenericAPIView):
+class CategoriesListCreateView(ListCreateAPIView):
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = CategoryCreateSerializer
     pagination_class = None
 
     def get_queryset(self):
         return Category.get_ancestors(ascending=False, include_self=False)
 
-    def get(self, request, *args, **kwargs):
-        root_nodes = self.queryset.get_cached_trees()
+    def list(self, request, *args, **kwargs):
+        root_nodes = Category.objects.all().get_cached_trees()
 
         data = []
         for n in root_nodes:
@@ -24,7 +24,7 @@ class CategoriesListView(GenericAPIView):
         return Response(data, status=status.HTTP_200_OK)
 
     def recursive_node_to_dict(self, node):
-        result = self.get_serializer(instance=node).data
+        result = CategorySerializer(instance=node).data
         children = [self.recursive_node_to_dict(c) for c in node.get_children()]
         if children:
             result["children"] = children

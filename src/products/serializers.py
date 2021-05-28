@@ -13,6 +13,16 @@ class CategorySerializer(serializers.ModelSerializer):
         }
 
 
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'parent',)
+        extra_kwargs = {
+            'id': {
+                'read_only': True
+            }
+        }
+
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

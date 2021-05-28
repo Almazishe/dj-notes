@@ -1,6 +1,13 @@
+from django.urls import reverse
 from django.contrib import auth
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
+from .utils import Util
 
 User = auth.get_user_model()
 
@@ -62,3 +69,41 @@ class LoginSerializer(serializers.ModelSerializer):
             'username': user.username,
             'tokens': user.tokens()
         }
+
+
+class RequestResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(min_length=2)
+
+    class Meta:
+        fields = ('email',)
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(min_length=8, max_length=70, write_only=True)
+    password_confirm = serializers.CharField(min_length=8, max_length=70, write_only=True)
+    uidb64 = serializers.CharField(min_length=1, write_only=True)
+    token = serializers.CharField(min_length=1, write_only=True)
+
+    class Meta:
+        fields = ('password', 'password_confirm', 'uidb64', 'token')
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        password_confirm = attrs.get('password_confirm')
+        uidb64 = attrs.get('uidb64')
+        token = attrs.get('token')
+
+        if password != password_confirm:
+            raise serializers.ValidationError('Passwords didnt match')
+
+        try:
+            user_id = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=user_id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                raise AuthenticationFailed('The reset link is invalid.', 401)
+            user.set_password(password)
+            user.save()
+            return user
+        except Exception as e:
+            raise AuthenticationFailed('The reset link is invalid.', 401)
