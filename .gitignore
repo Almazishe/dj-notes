@@ -1,2 +1,11 @@
 # Project exclude paths
 /venv/
+
+.env
+
+db.sqlite3
+
+/.idea/
+.idea/
+/.idea
+.idea
