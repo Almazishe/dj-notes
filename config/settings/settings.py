@@ -16,18 +16,18 @@ from pathlib import Path
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, os.path.join(BASE_DIR, 'src'))
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=0))
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'damp-sands-61734.herokuapp.com']
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG')
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'rocky-citadel-41338.herokuapp.com']
 
 AUTH_USER_MODEL = 'accounts.User'
 # Application definition
@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'mptt',
 
-    'accounts',
-    'products',
+    'src.accounts',
+    'src.products',
 ]
 
 MIDDLEWARE = [

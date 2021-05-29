@@ -23,9 +23,9 @@ urlpatterns = [
         path('documentation/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
         # Authorization
-        path('auth/', include('accounts.urls')),
+        path('auth/', include('src.accounts.urls')),
 
         # Products
-        path('products/', include('products.urls')),
+        path('products/', include('src.products.urls')),
     ]))
 ]

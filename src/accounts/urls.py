@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import RegisterView, VerifyEmail, LoginView, ConfirmPasswordChangeView, RequestPasswordResetView, LogoutView
 
 urlpatterns = [
-    path('social/', include('accounts.social_auth.urls')),
+    path('social/', include('src.accounts.social_auth.urls')),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
