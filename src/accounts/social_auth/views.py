@@ -2,11 +2,10 @@ import os
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from .serializers import GoogleAuthSerializer
+from .serializers import GoogleAuthSerializer, FacebookAuthSerializer
 
 
-class GoogleAuthView(GenericAPIView):
-    serializer_class = GoogleAuthSerializer
+class BaseSocialAuthView(GenericAPIView):
     pagination_class = None
 
     def post(self, request):
@@ -15,5 +14,10 @@ class GoogleAuthView(GenericAPIView):
         data = ((serializer.validated_data)['auth_token'])
         return Response(data, status=status.HTTP_200_OK)
 
-    def get(self, request):
-        pass
+
+class GoogleAuthView(BaseSocialAuthView):
+    serializer_class = GoogleAuthSerializer
+
+
+class FacebookAuthView(BaseSocialAuthView):
+    serializer_class = FacebookAuthSerializer

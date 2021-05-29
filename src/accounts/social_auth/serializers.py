@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from .providers.google import Google
+from .providers.facebook import Facebook
 from ..serializers import LoginSerializer
 
 User = get_user_model()
@@ -32,6 +33,7 @@ class BaseProviderSerializer(serializers.Serializer):
             )
             new_user.set_password(os.environ.get('SOCIAL_SECRET'))
             new_user.save()
+
         user = authenticate(email=email, password=os.environ.get('SOCIAL_SECRET'))
         serializer = LoginSerializer(instance=user)
         print(serializer.data)
@@ -59,3 +61,20 @@ class GoogleAuthSerializer(BaseProviderSerializer):
         name = user_data['name']
 
         return self.register_user(user_id=user_id, email=email, name=name)
+
+
+class FacebookAuthSerializer(BaseProviderSerializer):
+    auth_token = serializers.CharField()
+
+    def validate_auth_token(self, auth_token):
+        user_data = Facebook.validate(auth_token)
+
+        try:
+            user_id = user_data['id']
+            email = user_data['email']
+            name = user_data['name']
+            return self.register_social_user(user_id=user_id, email=email, name=name)
+        except Exception as identifier:
+            raise serializers.ValidationError(
+                'The token  is invalid or expired. Please login again.'
+            )
