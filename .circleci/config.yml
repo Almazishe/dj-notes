@@ -21,9 +21,13 @@ jobs:
       - heroku/install
       - setup_remote_docker:
           version: 18.06.0-ce
-      - run: |
-          docker info
-          docker build -t dj-notes .
+
+      - run:
+          name: Building image
+          command:
+            docker info
+            docker build -t dj-notes .
+
       - run:
           name: Pushing to heroku registry
           command:
