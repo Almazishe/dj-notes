@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {}
-DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+DATABASES['default'] = dj_database_url.config(default=os.environ.get('HEROKU_POSTGRESQL_COPPER_URL'))
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
