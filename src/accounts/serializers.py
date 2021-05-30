@@ -11,22 +11,29 @@ User = auth.get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=70, min_length=8, write_only=True)
+    password_confirm = serializers.CharField(max_length=70, min_length=8, write_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password')
+        fields = ('email', 'username', 'password', 'password_confirm')
 
     def validate(self, attrs):
         email = attrs.get('email', '')
         username = attrs.get('username', '')
+        password_confirm = attrs.get('password_confirm')
+        password = attrs.get('password')
 
         if not username.isalnum():
             raise serializers.ValidationError(
                 'Username must only contain alphanumeric chars.')
 
+        if password != password_confirm:
+            raise serializers.ValidationError('Passwords didnt mach')
+
         return attrs
 
     def create(self, validated_data):
+        validated_data.pop('password_confirm')
         return User.objects.create_user(**validated_data)
 
 

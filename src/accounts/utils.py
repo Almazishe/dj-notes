@@ -10,3 +10,4 @@ class Util:
             to=[data.get('to_email')]
         )
         email.send()
+

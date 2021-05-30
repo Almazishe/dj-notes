@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-   python: circleci/python@1.2
+  heroku: circleci/heroku@1.0.1
 
 workflows:
   sample:
@@ -10,13 +10,21 @@ workflows:
 
 
 jobs:
-  build-and-test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
-    docker:
-      - image: cimg/python:3.8
+  deploy:
+    executor: heroku/default
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
       - run:
-          name: Run tests
-          command: python manage.py test
+          name: Storing previous commit
+          command: |
+            git rev-parse HEAD > ./commit.txt
+      - heroku/install
+      - setup_remote_docker:
+          version: 18.06.0-ce
+      - run:
+          name: Pushing to heroku registry
+          command: |
+            heroku container:login
+            heroku container:push web -a=rocky-citadel-41338
+            heroku container:release web -a rocky-citadel-41338
+
