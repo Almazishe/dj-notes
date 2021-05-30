@@ -29,6 +29,6 @@ jobs:
             heroku container:login
             heroku container:push web -a=$HEROKU_APP_NAME
             heroku container:release web -a $HEROKU_APP_NAME
-            heroku run python manage.py makemigrations
-            heroku run python manage.py migrate
+            heroku run python manage.py makemigrations -a $HEROKU_APP_NAME
+            heroku run python manage.py migrate -a $HEROKU_APP_NAME
 
