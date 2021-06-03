@@ -13,11 +13,21 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, \
-    RequestResetPasswordSerializer, SetNewPasswordSerializer, LogoutSerializer
+    RequestResetPasswordSerializer, SetNewPasswordSerializer, LogoutSerializer, \
+    UserSerializer
 from .utils import Util
 from .renderers import UserRender
 
 User = get_user_model()
+
+
+class UserMeView(views.APIView):
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        serializer = self.serializer_class(instance=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class RegisterView(generics.GenericAPIView):

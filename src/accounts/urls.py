@@ -1,9 +1,13 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import RegisterView, VerifyEmail, LoginView, ConfirmPasswordChangeView, RequestPasswordResetView, LogoutView
+from .views import RegisterView, VerifyEmail, LoginView, \
+    ConfirmPasswordChangeView, RequestPasswordResetView, \
+    LogoutView, UserMeView
 
 urlpatterns = [
     path('social/', include('src.accounts.social_auth.urls')),
+
+    path('me/', UserMeView.as_view(), name='me-user'),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
